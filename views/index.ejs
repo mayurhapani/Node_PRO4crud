@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div class="flex flex-row bg-zinc-600 min-h-screen">
+      <div class="basis-3/12 bg-zinc-800 p-10">
+        <h2 class="text-center text-white text-4xl mb-10 font-bold">Add Books</h2>
+        <form class="text-zinc-400" action="\addBook" method="post">
+          <input
+            class="bg-transparent border border-zinc-600 p-3 rounded-lg mb-3 w-full"
+            type="text"
+            name="bookname"
+            placeholder="Enter name of book"
+            value="<%= editedBook?editedBook.bookname:'' %>"
+          />
+
+          <input
+            class="bg-transparent border border-zinc-600 p-3 rounded-lg mb-3 w-full"
+            type="text"
+            name="bookauth"
+            placeholder="Enter name of auther"
+            value="<%= editedBook?editedBook.bookauth:'' %>"
+          />
+
+          <select
+            name="booksub"
+            class="bg-transparent border border-zinc-600 p-3 rounded-lg mb-3 w-full"
+          >
+            <option value="" disabled selected>--Select Subject--</option>
+
+            <% ["Maths","Science","English","Hindi","IT"].map((sub)=>{ %>
+            <option class="bg-transparent p-3" <% if(sub==editedBook.booksub){ %> selected <% } %> value="<%= sub %>"><%= sub %></option>
+            <% }) %>
+          </select>
+
+          <textarea
+            class="bg-transparent border border-zinc-600 p-3 rounded-lg mb-3 w-full"
+            name="bookdisc"
+            placeholder="Enter bookdisc"
+          >
+<%= editedBook?editedBook.bookdisc:'' %> </textarea
+          >
+
+          <input
+            class="bg-transparent border border-zinc-600 p-3 rounded-lg mb-3 w-full"
+            type="number"
+            name="mrp"
+            placeholder="enter MRP of book"
+            value="<%= editedBook?editedBook.mrp:'' %>"
+          />
+
+          <input
+            class="bg-transparent border border-zinc-600 p-3 rounded-lg mb-3 w-full"
+            type="number"
+            name="price"
+            placeholder="enter price of book"
+            value="<%= editedBook?editedBook.price:'' %>"
+          />
+
+          <input
+            class="bg-blue-500 p-3 rounded-lg mb-3 text-white"
+            type="submit"
+            value="<%= isId?'Edit':'Submit'%>"
+          />
+        </form>
+      </div>
+
+      <div class="basis-9/12 p-5 overflow-y-scroll">
+        <div class="flex flex-row flex-wrap">
+          <% books.map((book)=>{ %>
+          <div class="basis-1/3 p-2">
+            <div class="card border-4 border-zinc-500 rounded-lg p-5 h-full">
+              <img
+                class="h-96 w-full"
+                src="https://d3ry4o1su9a59w.cloudfront.net/public/60104007ace1090010e00499/579a2da6d9e84095ea000065/650d4f1bc3a5ac7607cda920/1/432-0001.webp"
+                alt=""
+              />
+              <h2 class="text-3xl text-white font-bold uppercase mt-5 mb-0">
+                <%= book.bookname %>
+              </h2>
+              <h4 class="text-lg text-zinc-400 capitalize mb-2 text-end">
+                -- <%= book.bookauth %>
+              </h4>
+              <span class="text-lg text-white capitalize mb-5"
+                ><strong>Subject :</strong> <%= book.booksub %></span
+              >
+              <p class="text-sm text-zinc-400 capitalize"><%= book.bookdisc %></p>
+              <div class="flex flex-row justify-between items-center mt-4">
+                <span class="text-md text-white capitalize"
+                  ><strong>MRP : $</strong>
+                  <span class="line-through text-red-500 text-xl"> <%= book.mrp %> </span></span
+                >
+                <span class="text-md text-white capitalize"
+                  ><strong>New Price : $</strong>
+                  <span class="text-green-500 text-xl text-bold"> <%= book.price %> </span></span
+                >
+              </div>
+              <div class="flex flex-row justify-center items-center mt-4">
+                <a
+                  href="/deleteData?id=<%= book._id %>"
+                  class="bg-red-500 w-20 text-center py-2 text-white rounded-lg me-5"
+                  >Delete</a
+                >
+                <a
+                  href="/editData?id=<%= book._id %>"
+                  class="bg-blue-500 w-20 text-center py-2 text-white rounded-lg"
+                  >Edit</a
+                >
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

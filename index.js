@@ -1,13 +1,28 @@
 const express = require("express");
+const app = express();
 const db = require("./config/database");
 const bookModel = require("./models/book");
-const app = express();
+const multer = require("multer");
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static("uploads"));
 
 let editedBook = {};
 let isId = "";
+
+// file upload middelware start
+
+const fileUpload = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+const imageUpload = multer({ storage: fileUpload }).single("image");
+// file upload middelware end
 
 app.get("/", async (req, res) => {
   try {
@@ -19,14 +34,15 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.post("/addBook", async (req, res) => {
+app.post("/addBook", imageUpload, async (req, res) => {
   const { bookname, bookauth, booksub, bookdisc, mrp, price } = req.body;
+  let image = req.file.path || "";
 
   if (isId) {
     try {
       let book = await bookModel.findOneAndUpdate(
         { _id: isId },
-        { bookname, bookauth, booksub, bookdisc, mrp, price }
+        { bookname, bookauth, booksub, bookdisc, mrp, price, image }
       );
     } catch (err) {
       console.log(err);
@@ -38,7 +54,7 @@ app.post("/addBook", async (req, res) => {
   }
 
   try {
-    let book = await bookModel.create({ bookname, bookauth, booksub, bookdisc, mrp, price });
+    let book = await bookModel.create({ bookname, bookauth, booksub, bookdisc, mrp, price, image });
     res.redirect("/");
   } catch (err) {
     console.log(err);

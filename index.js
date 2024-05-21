@@ -3,6 +3,7 @@ const app = express();
 const db = require("./config/database");
 const bookModel = require("./models/book");
 const multer = require("multer");
+const fs = require("fs");
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
@@ -40,6 +41,10 @@ app.post("/addBook", imageUpload, async (req, res) => {
 
   if (isId) {
     try {
+      bookModel.findOne({ _id: isId }).then((book) => {
+        fs.unlinkSync(book.image);
+      });
+
       let book = await bookModel.findOneAndUpdate(
         { _id: isId },
         { bookname, bookauth, booksub, bookdisc, mrp, price, image }
@@ -60,6 +65,12 @@ app.post("/addBook", imageUpload, async (req, res) => {
     console.log(err);
     return false;
   }
+});
+
+app.get("/cancel", async (req, res) => {
+  isId = "";
+  editedBook = {};
+  return res.redirect("/");
 });
 
 app.get("/deleteData", async (req, res) => {
